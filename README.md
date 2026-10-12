@@ -5,9 +5,7 @@
 ![Labs](https://img.shields.io/badge/labs-3-blue?style=flat-square)
 ![Tools](https://img.shields.io/badge/tools-Packet%20Tracer%20%7C%20Cisco%20IOS-049FD9?style=flat-square)
 
-A public, hands-on journey from absolute beginner to expert in **networking, telecoms and Linux system administration**, over 5 years. Every lab is documented here and explained in a LinkedIn article.
-
-🇫🇷 *Un parcours pratique et public, du niveau débutant à expert en réseaux, télécoms et administration Linux. Chaque TP est documenté ici et expliqué dans un article LinkedIn. Les guides de TP sont rédigés en français.*
+A public, hands-on journey from absolute beginner to expert in **networking, telecoms and Linux system administration**, over 5 years. Every lab is documented here and explained in a LinkedIn article (published in French and English).
 
 > **What comes after:** once the networking and Linux foundations are solid, the series continues with **Fiber Optics, DevOps, DevSecOps, Cybersecurity, and Web & Mobile Development**, using the same lab → article → repository format. See the [roadmap](#-roadmap).
 
@@ -73,4 +71,4 @@ Found a mistake, or have a better way to do something? Open an **issue** or a **
 
 ## 📬 Contact
 
-[LinkedIn](https://www.linkedin.com/in/charles-eric-heuna-8b4b74182/) · [GitHub profile](https://github.com/erikheuna)
+[LinkedIn](https://www.linkedin.com/in/YOUR-LINKEDIN/) · [GitHub profile](https://github.com/YOUR-USERNAME)

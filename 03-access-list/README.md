@@ -1,71 +1,71 @@
-# TP3 — Contrôler qui parle à qui avec les ACL (Packet Tracer)
+# Lab 3: Controlling Traffic with ACLs (Packet Tracer)
 
-[← Lab précédent](../02-dhcp) · [Sommaire](../README.md)
+[← Previous lab](../02-dhcp) · [Series index](../README.md)
 
-| Fichier | Contenu |
+| File | Content |
 |---|---|
-| `tp03.pkt` | Fichier Packet Tracer du TP |
-| `configs/` | Configurations des équipements (texte) |
-| `images/` | Captures d'écran |
+| `tp03.pkt` | Packet Tracer file for this lab |
+| `configs/` | ACL configurations (standard and extended) |
+| `images/` | Screenshots |
 
-📝 Article LinkedIn : [FR](#) · [EN](#)
+📝 LinkedIn article: [FR](#) · [EN](#)
 
-**Niveau :** Débutant → intermédiaire
-**Prérequis :** TP1 (routage inter-réseaux) et TP2 (DHCP)
-**Objectif :** Utiliser les listes de contrôle d'accès (ACL) du routeur pour filtrer le trafic entre les deux réseaux : d'abord une ACL standard, puis une ACL étendue.
-**Durée estimée :** 60–75 min
+**Level:** Beginner → intermediate
+**Prerequisites:** Lab 1 (inter-network routing) and Lab 2 (DHCP)
+**Objective:** Use the router's Access Control Lists (ACLs) to filter traffic between the two networks: first a standard ACL, then an extended ACL.
+**Estimated time:** 60–75 minutes
 
 ---
 
-## 1. Topologie : celle du TP2 + un serveur
+## 1. Topology: the Lab 2 setup plus a server
 
 ```
                           [Server0]
                               |
         [PC0]                 |                  [PC2]
           |                   |                     |
-        [Switch0] ------ [Routeur0] ------ [Switch1]
+        [Switch0] ------ [Router0] ------ [Switch1]
           |                                         |
         [PC1]                                    [PC3]
 ```
 
-Ajoute **un serveur** (Server-PT) branché sur **Switch0** (réseau 1) :
+Add **a server** (Server-PT) connected to **Switch0** (network 1):
 
-| Équipement | Réseau | Adresse IP | Configuration |
+| Device | Network | IP address | Configuration |
 |---|---|---|---|
-| Server0 | 192.168.1.0/24 | **192.168.1.5** (statique) | masque 255.255.255.0, passerelle 192.168.1.1 |
+| Server0 | 192.168.1.0/24 | **192.168.1.5** (static) | mask 255.255.255.0, gateway 192.168.1.1 |
 
-> **Lien avec le TP2 :** 192.168.1.5 fait partie de la plage exclue du DHCP (.1 à .9). C'est exactement le rôle des exclusions : réserver des adresses pour les équipements à IP fixe.
+> **Link with Lab 2:** 192.168.1.5 belongs to the range excluded from DHCP (.1 to .9). That is exactly the purpose of exclusions: reserving addresses for fixed-IP devices.
 
-Le service **HTTP** du serveur est activé par défaut dans Packet Tracer (onglet *Services → HTTP*). Vérifie qu'il est bien sur « On ».
+The server's **HTTP** service is enabled by default in Packet Tracer (tab *Services → HTTP*). Make sure it is set to "On".
 
-**Avant de commencer :** vérifie que tout fonctionne (les 4 PC ont une IP par DHCP, PC0 peut pinguer PC2 et le serveur). On ne filtre jamais un réseau qu'on n'a pas testé avant.
+**Before you start:** check that everything works (the 4 PCs get an IP through DHCP, PC0 can ping PC2 and the server). Never filter a network you have not tested first.
 
 ---
 
-## 2. C'est quoi une ACL ?
+## 2. What is an ACL?
 
-Une ACL est une liste de règles « autoriser / refuser » que le routeur lit **de haut en bas** pour chaque paquet, sur une interface et dans un sens donné (`in` = entrant, `out` = sortant).
+An ACL is a list of "permit / deny" rules that the router reads **from top to bottom** for each packet, on a given interface and in a given direction (`in` = inbound, `out` = outbound).
 
-Trois règles à retenir :
-1. **Première règle qui correspond = gagnante.** Le routeur s'arrête là. L'ordre est donc crucial.
-2. **Refus implicite à la fin.** Si aucune règle ne correspond, le paquet est rejeté (un `deny any` invisible termine toute ACL).
-3. **Une ACL ne fait rien tant qu'elle n'est pas appliquée** sur une interface avec `ip access-group`.
+Three rules to remember:
+1. **The first matching rule wins.** The router stops there, so order is crucial.
+2. **Implicit deny at the end.** If no rule matches, the packet is dropped (an invisible `deny any` ends every ACL).
+3. **An ACL does nothing until it is applied** to an interface with `ip access-group`.
 
-| Type | Filtre sur | Où la placer |
+| Type | Filters on | Where to place it |
 |---|---|---|
-| **Standard** (numéros 1–99) | l'adresse IP **source** uniquement | **près de la destination** |
-| **Étendue** (numéros 100–199, ou nommée) | source, destination, protocole, port | **près de la source** |
+| **Standard** (numbers 1–99) | the **source** IP address only | **close to the destination** |
+| **Extended** (numbers 100–199, or named) | source, destination, protocol, port | **close to the source** |
 
-**Le masque inversé (wildcard) :** dans une ACL, on n'écrit pas 255.255.255.0 mais son inverse, 0.0.0.255. Un `0` signifie « ce bit doit correspondre », un `255` signifie « peu importe ». Donc `192.168.2.0 0.0.0.255` = tout le réseau 192.168.2.x, et `host 192.168.2.11` = uniquement cette machine.
+**The wildcard mask:** in an ACL you do not write 255.255.255.0 but its inverse, 0.0.0.255. A `0` means "this bit must match", and a `255` means "don't care". So `192.168.2.0 0.0.0.255` = the whole 192.168.2.x network, and `host 192.168.2.11` = that machine only.
 
 ---
 
-## 3. Partie A — ACL standard : bloquer une machine
+## 3. Part A: Standard ACL, block one host
 
-**Scénario :** PC3 (192.168.2.11) ne doit plus pouvoir atteindre le réseau 1. Les autres machines du réseau 2 gardent l'accès.
+**Scenario:** PC3 (192.168.2.11) must no longer reach network 1. The other machines in network 2 keep their access.
 
-Une ACL standard ne regarde que la source, donc on la place **près de la destination** : sur Gi0/0, dans le sens **sortant** (vers le réseau 1).
+A standard ACL only looks at the source, so we place it **close to the destination**: on Gi0/0, in the **outbound** direction (toward network 1).
 
 ```
 enable
@@ -81,15 +81,15 @@ interface GigabitEthernet0/0
 end
 ```
 
-La ligne `permit any` est indispensable : sans elle, le refus implicite bloquerait **tout** le monde.
+The `permit any` line is essential: without it, the implicit deny would block **everyone**.
 
-### Vérifications
-- Depuis **PC3** : `ping 192.168.1.10` (ou l'IP d'un PC du réseau 1) → doit **échouer**.
-- Depuis **PC2** : même ping → doit **réussir**.
-- Sur le routeur : `show access-lists` → chaque règle affiche un compteur de paquets (`matches`). C'est ainsi qu'on vérifie qu'une règle fonctionne vraiment.
-- `show ip interface GigabitEthernet0/0` → ligne « Outgoing access list is 10 ».
+### Verification
+- From **PC3**: `ping 192.168.1.10` (or any PC in network 1) → must **fail**.
+- From **PC2**: same ping → must **succeed**.
+- On the router: `show access-lists` → each rule shows a packet counter (`matches`). This is how you check that a rule really works.
+- `show ip interface GigabitEthernet0/0` → line "Outgoing access list is 10".
 
-### Nettoyage avant la partie B
+### Cleanup before Part B
 ```
 configure terminal
 interface GigabitEthernet0/0
@@ -101,11 +101,11 @@ end
 
 ---
 
-## 4. Partie B — ACL étendue : n'autoriser que le web vers le serveur
+## 4. Part B: Extended ACL, allow only web traffic to the server
 
-**Scénario :** les machines du réseau 2 (invités) ne peuvent accéder qu'au **service web (HTTP) du serveur** 192.168.1.5. Tout le reste vers le réseau 1 est interdit.
+**Scenario:** hosts in network 2 (guests) may only reach the server's **web service (HTTP)** at 192.168.1.5. Everything else toward network 1 is forbidden.
 
-On filtre près de la source : sur Gi0/1, dans le sens **entrant** (le trafic du réseau 2 qui arrive au routeur).
+We filter close to the source: on Gi0/1, in the **inbound** direction (traffic from network 2 arriving at the router).
 
 ```
 configure terminal
@@ -124,48 +124,48 @@ end
 write memory
 ```
 
-### Pourquoi la première ligne (`permit udp any eq 68 any eq 67`) ?
-C'est la requête **DHCP** des clients (port source 68, port destination 67). Sans elle, l'ACL bloquerait les demandes DHCP du réseau 2 : un PC qui renouvelle son bail ne recevrait plus d'adresse. Ça illustre un principe important : **une ACL peut casser des services auxquels on ne pensait pas.**
+### Why the first line (`permit udp any eq 68 any eq 67`)?
+It is the clients' **DHCP** request (source port 68, destination port 67). Without it, the ACL would block DHCP requests from network 2: a PC renewing its lease would no longer receive an address. This illustrates an important principle: **an ACL can break services you did not think about.**
 
-### Vérifications
-- Depuis **PC2**, onglet *Desktop → Web Browser* : `http://192.168.1.5` → la page du serveur **s'affiche**.
-- Depuis **PC2** : `ping 192.168.1.5` → **échoue** (ICMP n'est pas autorisé).
-- Depuis **PC2** : `ping 192.168.1.10` (PC0) → **échoue**.
-- `show access-lists` → les compteurs de `permit tcp` et `deny ip any any` augmentent selon les tests.
+### Verification
+- From **PC2**, *Desktop → Web Browser*: `http://192.168.1.5` → the server's page **is displayed**.
+- From **PC2**: `ping 192.168.1.5` → **fails** (ICMP is not allowed).
+- From **PC2**: `ping 192.168.1.10` (PC0) → **fails**.
+- `show access-lists` → the counters of `permit tcp` and `deny ip any any` increase as you test.
 
-> Selon la version de Packet Tracer, un paquet refusé s'affiche par « Request timed out » ou « Destination host unreachable ». Dans les deux cas, c'est bien l'ACL qui bloque.
-
----
-
-## 5. Les pièges classiques
-
-1. **ACL créée mais pas appliquée.** Sans `ip access-group`, rien ne se passe.
-2. **Mauvais sens (`in` / `out`) ou mauvaise interface.** Réfléchis toujours : « d'où vient le paquet, et à quel endroit je l'intercepte ? ».
-3. **Ordre des règles.** Si un `permit` large est placé avant un `deny` précis, le `deny` n'est jamais atteint.
-4. **Le refus implicite.** Une ACL qui ne contient que des `deny` bloque tout. Pense au `permit` final.
-5. **Les ACL sont sans état (stateless).** Dans la partie B, PC0 (réseau 1) ne peut plus pinguer PC2 : la requête part bien, mais la **réponse** de PC2 revient par Gi0/1 en entrée, et l'ACL la refuse. Une ACL classique ne « se souvient » pas qu'une conversation a été initiée de l'autre côté. C'est la limite que les pare-feu à états (comme **FortiGate**, qu'on verra plus tard dans la série) viennent résoudre.
-6. **Modifier une ACL numérotée** est pénible : on ne peut pas insérer une ligne au milieu facilement. Les ACL **nommées** (comme `FILTRE_INVITES`) sont plus faciles à maintenir.
+> Depending on the Packet Tracer version, a denied packet shows as "Request timed out" or "Destination host unreachable". Either way, the ACL is doing the blocking.
 
 ---
 
-## 6. Ce qu'il faut retenir
+## 5. Classic pitfalls
 
-- Une ACL = liste de règles lue de haut en bas, **première correspondance gagnante**, **refus implicite** à la fin.
-- Standard = filtre sur la source, à placer près de la destination. Étendue = filtre fin (protocole, ports), à placer près de la source.
-- Une ACL doit être **appliquée** sur une interface, dans un sens précis.
-- On teste toujours **avant** et **après**, et on lit `show access-lists`.
-
----
-
-## 7. Pour aller plus loin (TP4)
-
-Les **VLAN** : segmenter un réseau directement au niveau des switches, avant même le routeur.
+1. **ACL created but not applied.** Without `ip access-group`, nothing happens.
+2. **Wrong direction (`in` / `out`) or wrong interface.** Always ask yourself: "where does the packet come from, and where do I intercept it?"
+3. **Rule order.** If a broad `permit` comes before a specific `deny`, the `deny` is never reached.
+4. **The implicit deny.** An ACL containing only `deny` rules blocks everything. Remember the final `permit`.
+5. **ACLs are stateless.** In Part B, PC0 (network 1) can no longer ping PC2: the request leaves fine, but PC2's **reply** comes back through Gi0/1 inbound, and the ACL rejects it. A classic ACL does not "remember" that a conversation was started from the other side. This is the limit that stateful firewalls (such as **FortiGate**, covered later in the series) solve.
+6. **Editing a numbered ACL** is painful: you cannot easily insert a line in the middle. **Named** ACLs (like `FILTRE_INVITES`) are easier to maintain.
 
 ---
 
-## Captures d'écran
+## 6. Key takeaways
 
-<!-- Ajoute tes captures dans le dossier images/ puis décommente les lignes ci-dessous :
-![Topologie](images/topologie.png)
-![Vérification](images/verification.png)
+- An ACL is a list of rules read top to bottom: **first match wins**, with an **implicit deny** at the end.
+- Standard = filters on the source, placed close to the destination. Extended = fine-grained filtering (protocol, ports), placed close to the source.
+- An ACL must be **applied** to an interface, in a specific direction.
+- Always test **before** and **after**, and read `show access-lists`.
+
+---
+
+## 7. Next lab
+
+**VLANs**: segmenting a network directly at the switch level, before the router.
+
+---
+
+## Screenshots
+
+<!-- Add your screenshots to the images/ folder, then uncomment the lines below:
+![Topology](images/topology.png)
+![ACL counters](images/access-lists.png)
 -->

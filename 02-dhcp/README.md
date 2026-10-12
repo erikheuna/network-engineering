@@ -1,50 +1,50 @@
-# TP2 — Automatiser l'adressage IP avec DHCP (Packet Tracer)
+# Lab 2: Automating IP Addressing with DHCP (Packet Tracer)
 
-[← Lab précédent](../01-reseau-lan-simple) · [Sommaire](../README.md) · [Lab suivant →](../03-acl)
+[← Previous lab](../01-reseau-lan-simple) · [Series index](../README.md) · [Next lab →](../03-acl)
 
-| Fichier | Contenu |
+| File | Content |
 |---|---|
-| `tp02.pkt` | Fichier Packet Tracer du TP |
-| `configs/` | Configurations des équipements (texte) |
-| `images/` | Captures d'écran |
+| `tp02.pkt` | Packet Tracer file for this lab |
+| `configs/` | Device configurations (text) |
+| `images/` | Screenshots |
 
-📝 Article LinkedIn : [FR](#) · [EN](#)
+📝 LinkedIn article: [FR](#) · [EN](#)
 
-**Niveau :** Débutant
-**Prérequis :** TP1 (réseau LAN avec 2 sous-réseaux et routage inter-réseaux)
-**Objectif :** Remplacer l'adressage IP statique des 4 PC par une attribution automatique via DHCP configuré sur le routeur.
-**Durée estimée :** 40–50 min
+**Level:** Beginner
+**Prerequisite:** Lab 1 (LAN with two subnets and inter-network routing)
+**Objective:** Replace the static addressing of the 4 PCs with automatic assignment through DHCP, configured on the router.
+**Estimated time:** 40–50 minutes
 
 ---
 
-## 1. Rappel de la topologie (identique au TP1)
+## 1. Topology (same as Lab 1)
 
 ```
         [PC0]                                   [PC2]
           |                                        |
-        [Switch0] ---- [Routeur0] ---- [Switch1]
+        [Switch0] ---- [Router0] ---- [Switch1]
           |                                        |
         [PC1]                                   [PC3]
 ```
 
-- Réseau 1 (côté Switch0) : 192.168.1.0/24 — passerelle 192.168.1.1
-- Réseau 2 (côté Switch1) : 192.168.2.0/24 — passerelle 192.168.2.1
+- Network 1 (Switch0 side): 192.168.1.0/24, gateway 192.168.1.1
+- Network 2 (Switch1 side): 192.168.2.0/24, gateway 192.168.2.1
 
-Si tu repars d'un nouveau fichier Packet Tracer, reconstruis la topologie du TP1.
-
----
-
-## 2. Pourquoi le DHCP ?
-
-Configurer chaque PC à la main fonctionne pour 4 machines. Ça ne passe pas à l'échelle pour 200 postes, et ça multiplie les erreurs humaines (doublons d'IP, oublis de passerelle...). Le **DHCP (Dynamic Host Configuration Protocol)** centralise cette attribution : le routeur (ou un serveur dédié) distribue automatiquement IP, masque, passerelle et DNS à chaque PC qui en fait la demande.
-
-**Règle simple :** tout ce qui *distribue* ou *route* (routeur, serveurs) garde une IP fixe ; tout ce qui *consomme* (PC, laptops, téléphones) passe en DHCP.
+If you start from a new Packet Tracer file, rebuild the Lab 1 topology first.
 
 ---
 
-## 3. Étape 1 — Adresser les interfaces du routeur (prérequis indispensable)
+## 2. Why DHCP?
 
-Un pool DHCP ne sert à rien si le routeur n'a pas lui-même une adresse dans le réseau qu'il doit servir.
+Configuring each PC by hand works for 4 machines. It does not scale to 200 workstations, and it multiplies human errors (duplicate IPs, forgotten gateways). **DHCP (Dynamic Host Configuration Protocol)** centralizes the assignment: the router (or a dedicated server) automatically hands out an IP address, mask, gateway and DNS server to every PC that asks for them.
+
+**Simple rule:** anything that *serves* or *routes* (routers, servers) keeps a fixed IP. Anything that *consumes* (PCs, laptops, phones) uses DHCP.
+
+---
+
+## 3. Step 1: Address the router interfaces (mandatory prerequisite)
+
+A DHCP pool is useless if the router does not have an address in the network it is supposed to serve.
 
 ```
 enable
@@ -61,16 +61,16 @@ interface GigabitEthernet0/1
  exit
 ```
 
-Vérifie avec `show ip interface brief` : Gi0/0 et Gi0/1 doivent afficher leur IP et être en **up / up**.
+Check with `show ip interface brief`: Gi0/0 and Gi0/1 must show their IP address and be **up / up**.
 
 ---
 
-## 4. Étape 2 — Configurer les deux pools DHCP
+## 4. Step 2: Configure the two DHCP pools
 
-On crée **deux pools distincts**, un par sous-réseau, car chaque réseau a sa propre passerelle.
+Create **two separate pools**, one per subnet, because each network has its own gateway.
 
 ```
-! --- Pool pour le réseau 192.168.1.0/24 ---
+! --- Pool for network 192.168.1.0/24 ---
 ip dhcp excluded-address 192.168.1.1 192.168.1.9
 ip dhcp pool POOL_RESEAU1
  network 192.168.1.0 255.255.255.0
@@ -78,7 +78,7 @@ ip dhcp pool POOL_RESEAU1
  dns-server 8.8.8.8
  exit
 
-! --- Pool pour le réseau 192.168.2.0/24 ---
+! --- Pool for network 192.168.2.0/24 ---
 ip dhcp excluded-address 192.168.2.1 192.168.2.9
 ip dhcp pool POOL_RESEAU2
  network 192.168.2.0 255.255.255.0
@@ -90,79 +90,79 @@ end
 write memory
 ```
 
-**Pourquoi `ip dhcp excluded-address` ?**
-Le pool couvre tout le sous-réseau (de .1 à .254), et le routeur ne sait pas quelles adresses tu utilises déjà en statique. Sans exclusion, il pourrait attribuer à un PC une adresse déjà prise (par exemple la passerelle 192.168.1.1), ce qui crée un conflit d'IP.
+**Why `ip dhcp excluded-address`?**
+The pool covers the whole subnet (.1 to .254), and the router does not know which addresses you already use statically. Without an exclusion, it could hand a PC an address that is already taken (for example the gateway 192.168.1.1), which creates an IP conflict.
 
-On exclut donc :
-- l'adresse du routeur (la passerelle) ;
-- les équipements à IP fixe (serveurs, imprimantes, switches managés, points d'accès) ;
-- éventuellement une plage réservée pour de futurs équipements fixes.
+Typically you exclude:
+- the router's own address (the gateway);
+- devices with a fixed IP (servers, printers, managed switches, access points);
+- optionally, a range reserved for future fixed-IP devices.
 
-Ici, on exclut .1 à .9 : les PC recevront des adresses à partir de .10.
+Here, .1 to .9 are excluded: PCs will receive addresses starting at .10.
 
-> **Précision :** Cisco IOS teste souvent une adresse (ping) avant de l'attribuer, et saute celle qui répond. On ne peut pas s'y fier : un équipement qui ne répond pas au ping passe à travers. L'exclusion reste la bonne pratique.
+> **Note:** Cisco IOS often probes an address (ping) before assigning it and skips it if it answers. You cannot rely on this, because a device that does not answer pings slips through. Exclusions remain the best practice.
 >
-> **Sur l'ordre des commandes :** ce qui compte, c'est que l'exclusion soit en place **avant que les PC demandent une adresse**. Un PC qui a déjà reçu une adresse la garde jusqu'à la fin de son bail.
+> **About command order:** what matters is that the exclusion is in place **before PCs request an address**. A PC that already received an address keeps it until its lease expires.
 
 ---
 
-## 5. Étape 3 — Configurer les PC
+## 5. Step 3: Configure the PCs
 
-Sur chaque PC (PC0 à PC3) : **Desktop → IP Configuration → sélectionner "DHCP"** (au lieu de "Static"). Ne saisis aucune IP, aucun masque, aucune passerelle.
+On each PC (PC0 to PC3): **Desktop → IP Configuration → select "DHCP"** (instead of "Static"). Do not enter any IP, mask or gateway.
 
-Packet Tracer envoie alors une requête DHCP ; le PC récupère automatiquement IP, masque, passerelle et DNS.
+Packet Tracer then sends a DHCP request, and the PC automatically receives its IP, mask, gateway and DNS server.
 
 ---
 
-## 6. Vérifications
+## 6. Verification
 
-Sur chaque PC, dans **IP Configuration**, tu dois voir une IP attribuée automatiquement (192.168.1.x ou 192.168.2.x selon le switch).
+On each PC, in **IP Configuration**, you should see an automatically assigned IP (192.168.1.x or 192.168.2.x depending on the switch).
 
-Sur le routeur :
+On the router:
 ```
 show ip dhcp pool
 show ip dhcp binding
 ```
-- `show ip dhcp pool` : liste les pools, le nombre d'adresses louées et exclues.
-- `show ip dhcp binding` : liste les baux actifs (IP, adresse MAC du PC, expiration). Tu dois voir 4 lignes.
+- `show ip dhcp pool`: lists the pools, with the number of leased and excluded addresses.
+- `show ip dhcp binding`: lists active leases (IP, PC MAC address, expiration). You should see 4 lines.
 
-Test de connectivité :
+Connectivity test:
 ```
-ping <IP de PC2>     (depuis PC0)
+ping <IP of PC2>     (from PC0)
 ```
-Doit réussir : le DHCP ne change rien au routage, seulement à la méthode d'attribution.
+It must succeed: DHCP changes nothing about routing, only the way addresses are assigned.
 
 ---
 
-## 7. Le piège classique : « les pools sont bons mais personne n'obtient d'IP »
+## 7. The classic pitfall: "the pools are fine but nobody gets an IP"
 
-Si `show ip dhcp binding` est vide et que `show ip dhcp pool` affiche `Leased addresses : 0`, aucune requête n'est arrivée jusqu'au routeur. Vérifie dans l'ordre :
+If `show ip dhcp binding` is empty and `show ip dhcp pool` shows `Leased addresses: 0`, no request has reached the router. Check, in this order:
 
-1. **`show ip interface brief`** : les interfaces Gi0/0 et Gi0/1 ont-elles leur IP ? Si elles affichent **"unassigned"**, le routeur n'a aucune adresse dans les réseaux à servir et reste sourd aux demandes DHCP. C'est la cause la plus fréquente quand on repart d'un nouveau fichier.
-2. Les interfaces sont-elles en **up / up** ? Sinon : `no shutdown` oublié, ou problème de câble.
-3. Les PC sont-ils bien en mode **DHCP** ? Repasse en Static puis de nouveau en DHCP pour relancer la requête.
-4. Les liens sont-ils verts ? S'ils sont orange, attends 30 secondes ou utilise "Fast Forward Time".
-
----
-
-## 8. Ce qu'il faut retenir
-
-- Le DHCP fonctionne par **bail** (lease) : l'IP est prêtée pour une durée donnée.
-- Un pool DHCP n'a d'effet que si le routeur a une interface dans le réseau correspondant.
-- Les adresses fixes doivent être **exclues** pour éviter les conflits.
-- Un routeur Cisco peut gérer plusieurs pools, un par sous-réseau.
+1. **`show ip interface brief`**: do Gi0/0 and Gi0/1 have their IP address? If they show **"unassigned"**, the router has no address in the networks it should serve and stays deaf to DHCP requests. This is the most common cause when starting from a new file.
+2. Are the interfaces **up / up**? If not: `no shutdown` is missing, or there is a cabling problem.
+3. Are the PCs really in **DHCP** mode? Switch to Static, then back to DHCP, to resend the request.
+4. Are the links green? If they are orange, wait 30 seconds or use "Fast Forward Time".
 
 ---
 
-## 9. Pour aller plus loin (TP3)
+## 8. Key takeaways
 
-Les **listes de contrôle d'accès (ACL)** : restreindre qui peut communiquer avec qui entre les deux réseaux.
+- DHCP works with **leases**: an address is lent for a given duration.
+- A DHCP pool only has an effect if the router has an interface in the matching network.
+- Fixed addresses must be **excluded** to avoid conflicts.
+- A Cisco router can serve several pools, one per subnet.
 
 ---
 
-## Captures d'écran
+## 9. Next lab
 
-<!-- Ajoute tes captures dans le dossier images/ puis décommente les lignes ci-dessous :
-![Topologie](images/topologie.png)
-![Vérification](images/verification.png)
+[Lab 3](../03-acl): **Access Control Lists (ACLs)** to control who can talk to whom between the two networks.
+
+---
+
+## Screenshots
+
+<!-- Add your screenshots to the images/ folder, then uncomment the lines below:
+![Topology](images/topology.png)
+![DHCP bindings](images/dhcp-binding.png)
 -->

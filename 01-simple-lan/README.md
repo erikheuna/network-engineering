@@ -1,65 +1,65 @@
-# TP1 — Mon premier réseau LAN (Packet Tracer)
+# Lab 1: My First LAN (Packet Tracer)
 
-[Sommaire](../README.md) · [Lab suivant →](../02-dhcp)
+[Series index](../README.md) · [Next lab →](../02-dhcp)
 
-| Fichier | Contenu |
+| File | Content |
 |---|---|
-| `tp01.pkt` | Fichier Packet Tracer du TP |
-| `configs/` | Configurations des équipements (texte) |
-| `images/` | Captures d'écran |
+| `tp01.pkt` | Packet Tracer file for this lab |
+| `configs/` | Device configurations (text) |
+| `images/` | Screenshots |
 
-📝 Article LinkedIn : [FR](#) · [EN](#)
+📝 LinkedIn article: [FR](#) · [EN](#)
 
-**Niveau :** Débutant total
-**Objectif :** Construire un petit réseau local avec 2 switches et 1 routeur, adresser les postes en IPv4, et vérifier la connectivité de bout en bout.
-**Durée estimée :** 45–60 min
+**Level:** Absolute beginner
+**Objective:** Build a small local network with 2 switches and 1 router, assign IPv4 addresses, and verify end-to-end connectivity.
+**Estimated time:** 45–60 minutes
 
 ---
 
-## 1. Topologie à construire
+## 1. Topology
 
 ```
         [PC0]                                   [PC2]
           |                                        |
-        [Switch0] ---- [Routeur0] ---- [Switch1]
+        [Switch0] ---- [Router0] ---- [Switch1]
           |                                        |
         [PC1]                                   [PC3]
 ```
 
-Matériel Packet Tracer à glisser sur le plan de travail :
-- 1 routeur : **Router 2911** (ou équivalent)
-- 2 switches : **Switch 2960**
-- 4 PC (génériques)
-- Câbles : **Copper Straight-Through** entre PC↔Switch et Switch↔Routeur
+Devices to place in Packet Tracer:
+- 1 router: **Router 2911** (or equivalent)
+- 2 switches: **Switch 2960**
+- 4 generic PCs
+- Cables: **Copper Straight-Through** for PC ↔ Switch and Switch ↔ Router
 
-> Astuce Packet Tracer : au survol d'un câble mal choisi, une icône orange apparaît. Utilise le mode "Auto" de câblage au début si tu hésites sur le type de câble.
-
----
-
-## 2. Plan d'adressage IP
-
-On utilise deux sous-réseaux distincts, un par switch, reliés par le routeur (routage inter-réseaux).
-
-| Équipement | Interface | Adresse IP | Masque |
-|---|---|---|---|
-| Routeur0 | Gi0/0 (côté Switch0) | 192.168.1.1 | 255.255.255.0 |
-| Routeur0 | Gi0/1 (côté Switch1) | 192.168.2.1 | 255.255.255.0 |
-| PC0 | NIC | 192.168.1.10 | 255.255.255.0 (passerelle 192.168.1.1) |
-| PC1 | NIC | 192.168.1.11 | 255.255.255.0 (passerelle 192.168.1.1) |
-| PC2 | NIC | 192.168.2.10 | 255.255.255.0 (passerelle 192.168.2.1) |
-| PC3 | NIC | 192.168.2.11 | 255.255.255.0 (passerelle 192.168.2.1) |
+> **Tip:** if you hesitate on the cable type, use the automatic cabling mode at first. An orange icon on a link usually means the wrong cable was chosen.
 
 ---
 
-## 3. Configuration des PC
+## 2. IP addressing plan
 
-Sur chaque PC : onglet **Desktop → IP Configuration**, saisir IP / masque / passerelle selon le tableau ci-dessus (Static, pas DHCP pour ce TP).
+Two separate subnets, one per switch, joined by the router (inter-network routing).
+
+| Device | Interface | IP address | Mask | Gateway |
+|---|---|---|---|---|
+| Router0 | Gi0/0 (Switch0 side) | 192.168.1.1 | 255.255.255.0 | n/a |
+| Router0 | Gi0/1 (Switch1 side) | 192.168.2.1 | 255.255.255.0 | n/a |
+| PC0 | NIC | 192.168.1.10 | 255.255.255.0 | 192.168.1.1 |
+| PC1 | NIC | 192.168.1.11 | 255.255.255.0 | 192.168.1.1 |
+| PC2 | NIC | 192.168.2.10 | 255.255.255.0 | 192.168.2.1 |
+| PC3 | NIC | 192.168.2.11 | 255.255.255.0 | 192.168.2.1 |
 
 ---
 
-## 4. Configuration du routeur (CLI)
+## 3. PC configuration
 
-Clique sur Routeur0 → onglet **CLI** :
+On each PC: **Desktop → IP Configuration**, then enter the IP address, mask and default gateway from the table above (Static, not DHCP, for this lab).
+
+---
+
+## 4. Router configuration (CLI)
+
+Click Router0 and open the **CLI** tab:
 
 ```
 enable
@@ -79,46 +79,46 @@ end
 write memory
 ```
 
-`no shutdown` est l'étape que presque tout débutant oublie — sans elle, l'interface reste administrativement désactivée même si tout le reste est correct.
+`no shutdown` is the step almost every beginner forgets. Without it the interface stays administratively down, even if everything else is correct.
 
 ---
 
-## 5. Vérifications
+## 5. Verification
 
-Sur le routeur :
+On the router:
 ```
 show ip interface brief
 ```
-→ Les deux interfaces doivent apparaître **up / up**.
+Both interfaces must show **up / up**.
 
-Depuis PC0 (invite de commandes) :
+From PC0 (command prompt):
 ```
-ping 192.168.1.1      → doit réussir (passerelle locale)
-ping 192.168.2.1      → doit réussir (routeur, autre interface)
-ping 192.168.2.10     → doit réussir (PC2, routage inter-réseaux)
+ping 192.168.1.1      → must succeed (local gateway)
+ping 192.168.2.1      → must succeed (router, other interface)
+ping 192.168.2.10     → must succeed (PC2, inter-network routing)
 ```
 
-Si le dernier ping échoue alors que les deux premiers passent : vérifie que Routeur0 a bien les deux interfaces "up" et que les PC2/PC3 ont la bonne passerelle configurée (erreur la plus fréquente à ce stade).
+If the last ping fails while the first two succeed, check that both router interfaces are up/up and that PC2 and PC3 have the correct default gateway. This is the most common mistake at this stage.
 
 ---
 
-## 6. Ce qu'il faut retenir
+## 6. Key takeaways
 
-- Un switch ne fait que commuter des trames dans un même réseau (même sous-réseau IP)
-- Pour qu'un PC du réseau 192.168.1.0/24 parle à un PC du réseau 192.168.2.0/24, il faut un routeur : c'est le **routage inter-réseaux**
-- La passerelle par défaut est l'adresse que le PC contacte dès qu'il veut sortir de son propre sous-réseau
-
----
-
-## 7. Pour aller plus loin (TP2, semaine prochaine)
-
-Ajouter le DHCP sur le routeur pour que PC0–PC3 reçoivent leur IP automatiquement, au lieu de la configuration statique faite ici.
+- A switch only forwards frames inside one network (one IP subnet).
+- For a PC in 192.168.1.0/24 to talk to a PC in 192.168.2.0/24, a router is required: this is **inter-network routing**.
+- The default gateway is the address a PC contacts whenever it needs to leave its own subnet.
 
 ---
 
-## Captures d'écran
+## 7. Next lab
 
-<!-- Ajoute tes captures dans le dossier images/ puis décommente les lignes ci-dessous :
-![Topologie](images/topologie.png)
-![Vérification](images/verification.png)
+[Lab 2](../02-dhcp): replace the static addressing with **DHCP** served by the router.
+
+---
+
+## Screenshots
+
+<!-- Add your screenshots to the images/ folder, then uncomment the lines below:
+![Topology](images/topology.png)
+![Verification](images/verification.png)
 -->
