@@ -113,6 +113,9 @@ On each PC (PC0 to PC3): **Desktop → IP Configuration → select "DHCP"** (ins
 Packet Tracer then sends a DHCP request, and the PC automatically receives its IP, mask, gateway and DNS server.
 
 ![DHCP-PC](./images/pc0.jpg)
+![DHCP-PC](./images/pc1.jpg)
+![DHCP-PC](./images/pc2.jpg)
+![DHCP-PC](./images/pc3.jpg)
 
 ---
 
