@@ -138,6 +138,9 @@ ping <IP of PC2>     (from PC0)
 ```
 It must succeed: DHCP changes nothing about routing, only the way addresses are assigned.
 
+![PING-SUCCESS](./images/ping-success.jpg)
+
+
 ---
 
 ## 7. The classic pitfall: "the pools are fine but nobody gets an IP"
