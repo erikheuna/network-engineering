@@ -13,11 +13,11 @@ A public, hands-on journey from absolute beginner to expert in **networking, tel
 
 ## 📚 Labs
 
-| # | Lab | Level | Tools | Article |
-|:---:|---|:---:|---|---|
-| [01](./01-reseau-lan-simple) | First LAN: two subnets and a router | Beginner | Packet Tracer | [FR](#) · [EN](#) |
-| [02](./02-dhcp) | Automating addressing with DHCP | Beginner | Packet Tracer | [FR](#) · [EN](#) |
-| [03](./03-acl) | Controlling traffic with ACLs | Beginner → Intermediate | Packet Tracer | [FR](#) · [EN](#) |
+| # | Lab | Level | Tools 
+|:---:|---|:---:|---|
+| [01](./simple-lan) | First LAN: two subnets and a router | Beginner | Packet Tracer | 
+| [02](./02-dhcp) | Automating addressing with DHCP | Beginner | Packet Tracer | 
+| [03](./03-access-list) | Controlling traffic with ACLs | Beginner → Intermediate | Packet Tracer | 
 | 04 | VLANs | Beginner → Intermediate | Packet Tracer | *coming soon* |
 
 ---
