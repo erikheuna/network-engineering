@@ -1,19 +1,19 @@
 # Lab 2: Automating IP Addressing with DHCP (Packet Tracer)
 
-[← Previous lab](../01-reseau-lan-simple) · [Series index](../README.md) · [Next lab →](../03-acl)
+[← Previous lab](../01-reseau-lan-simple) · [Series index](../README.md) · [Next lab →](../03-access-list)
 
 | File | Content |
 |---|---|
-| `tp02.pkt` | Packet Tracer file for this lab |
+| `tp2.pkt` | Packet Tracer file for this lab |
 | `configs/` | Device configurations (text) |
 | `images/` | Screenshots |
 
-📝 LinkedIn article: [FR](#) · [EN](#)
+📝 LinkedIn article: https://lnkd.in/p/dVZ-xN6i
 
 **Level:** Beginner
 **Prerequisite:** Lab 1 (LAN with two subnets and inter-network routing)
 **Objective:** Replace the static addressing of the 4 PCs with automatic assignment through DHCP, configured on the router.
-**Estimated time:** 40–50 minutes
+**Estimated time:** 15-20 minutes
 
 ---
 
@@ -72,7 +72,7 @@ Create **two separate pools**, one per subnet, because each network has its own 
 ```
 ! --- Pool for network 192.168.1.0/24 ---
 ip dhcp excluded-address 192.168.1.1 192.168.1.9
-ip dhcp pool POOL_RESEAU1
+ip dhcp pool POOL_NETWORK_1
  network 192.168.1.0 255.255.255.0
  default-router 192.168.1.1
  dns-server 8.8.8.8
@@ -80,7 +80,7 @@ ip dhcp pool POOL_RESEAU1
 
 ! --- Pool for network 192.168.2.0/24 ---
 ip dhcp excluded-address 192.168.2.1 192.168.2.9
-ip dhcp pool POOL_RESEAU2
+ip dhcp pool POOL_NETWORK_2
  network 192.168.2.0 255.255.255.0
  default-router 192.168.2.1
  dns-server 8.8.8.8
@@ -112,6 +112,8 @@ On each PC (PC0 to PC3): **Desktop → IP Configuration → select "DHCP"** (ins
 
 Packet Tracer then sends a DHCP request, and the PC automatically receives its IP, mask, gateway and DNS server.
 
+![DHCP-PC](./images/pc0.jpg)
+
 ---
 
 ## 6. Verification
@@ -124,7 +126,11 @@ show ip dhcp pool
 show ip dhcp binding
 ```
 - `show ip dhcp pool`: lists the pools, with the number of leased and excluded addresses.
+![DHCP-POOL](./images/dhcp-pool.jpg)
+
 - `show ip dhcp binding`: lists active leases (IP, PC MAC address, expiration). You should see 4 lines.
+![DHCP-BINDING](./images/dhcp-binding.jpg)
+
 
 Connectivity test:
 ```
@@ -162,7 +168,6 @@ If `show ip dhcp binding` is empty and `show ip dhcp pool` shows `Leased address
 
 ## Screenshots
 
-<!-- Add your screenshots to the images/ folder, then uncomment the lines below:
+Add your screenshots to the images/ folder, then uncomment the lines below:
 ![Topology](images/topology.png)
-![DHCP bindings](images/dhcp-binding.png)
--->
+

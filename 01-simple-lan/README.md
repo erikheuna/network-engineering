@@ -118,7 +118,6 @@ If the last ping fails while the first two succeed, check that both router inter
 
 ## Screenshots
 
-Add your screenshots to the images/ folder, then uncomment the lines below:
 ![Topology](./images/topology.jpg)
 ![Verification](./images/ping.jpg)
 
