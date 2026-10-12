@@ -73,4 +73,4 @@ Found a mistake, or have a better way to do something? Open an **issue** or a **
 
 ## 📬 Contact
 
-[LinkedIn](https://www.linkedin.com/in/YOUR-LINKEDIN/) · [GitHub profile](https://github.com/YOUR-USERNAME)
+[LinkedIn](https://www.linkedin.com/in/charles-eric-heuna-8b4b74182/) · [GitHub profile](https://github.com/erikheuna)
