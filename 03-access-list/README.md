@@ -225,13 +225,3 @@ This lab keeps the server on Switch0 on purpose: the goal is to learn the ACL fu
 
 This lab is a **preview of network security**. The series now goes back to the CCNA fundamentals, starting with **CCNA Lab 2: the OSI and TCP/IP models in Simulation mode** (see the `ccna/` folder). ACLs return in depth in the Security phase, and VLANs in the Access phase.
 
----
-
-## Screenshots
-
-Add your topology and Part A captures to `images/`, then reference them like this:
-
-```
-![Topology](images/topology.png)
-![ACL counters, Part A](images/access-lists-part-a.png)
-```
