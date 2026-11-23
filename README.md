@@ -1,74 +1,97 @@
-# Zero to Expert — Networking & Linux Labs
+<div align="center">
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow%20the%20series-0A66C2?style=flat-square)](https://www.linkedin.com/in/YOUR-LINKEDIN/)
-![Status](https://img.shields.io/badge/status-in%20progress-brightgreen?style=flat-square)
-![Labs](https://img.shields.io/badge/labs-3-blue?style=flat-square)
-![Tools](https://img.shields.io/badge/tools-Packet%20Tracer%20%7C%20Cisco%20IOS-049FD9?style=flat-square)
+# Hi, I'm [Your Name] 👋
 
-A public, hands-on journey from absolute beginner to expert in **networking, telecoms and Linux system administration**, over 5 years. Every lab is documented here and explained in a LinkedIn article (published in French and English).
+### Network & Linux learner, documenting the road from zero to expert
 
-> **What comes after:** once the networking and Linux foundations are solid, the series continues with **Fiber Optics, DevOps, DevSecOps, Cybersecurity, and Web & Mobile Development**, using the same lab → article → repository format. See the [roadmap](#-roadmap).
+*Networking · Telecoms · Linux administration: one lab at a time.*
 
----
+**Next chapters:** Fiber Optics · DevOps · DevSecOps · Cybersecurity · Web & Mobile Development
 
-## 📚 Labs
+<br>
 
-| # | Lab | Level | Tools 
-|:---:|---|:---:|---|
-| [01](./simple-lan) | First LAN: two subnets and a router | Beginner | Packet Tracer | 
-| [02](./02-dhcp) | Automating addressing with DHCP | Beginner | Packet Tracer | 
-| [03](./03-access-list) | Controlling traffic with ACLs | Beginner → Intermediate | Packet Tracer | 
-| 04 | VLANs | Beginner → Intermediate | Packet Tracer | *coming soon* |
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow%20the%20series-0A66C2?style=for-the-badge)](https://www.linkedin.com/in/YOUR-LINKEDIN/)
+[![Series repo](https://img.shields.io/badge/GitHub-Zero%20to%20Expert%20labs-181717?style=for-the-badge&logo=github)](https://github.com/YOUR-USERNAME/reseaux-linux-zero-to-expert)
+
+</div>
 
 ---
 
-## 🗂️ Repository structure
+## 🎯 The Zero to Expert challenge
 
-```
-.
-├── README.md                  ← you are here
-├── 01-reseau-lan-simple/
-│   ├── README.md              ← lab guide (objective, topology, steps, pitfalls)
-│   ├── configs/               ← device configurations (text)
-│   ├── images/                ← screenshots
-│   └── tp01.pkt               ← Packet Tracer file
-├── 02-dhcp/
-├── 03-acl/
-└── linux/                     ← Linux labs (coming soon)
-```
+I started from the basics and I am building my skills **in public**, one lab at a time.
 
-Each lab folder follows the same layout, so you can jump into any of them.
+- 🔧 **1 hands-on lab** (Packet Tracer, then GNS3 and Linux VMs)
+- 📝 **1 article** on LinkedIn, in French and English
+- 📁 **1 folder here**, with the topology, the configs and the lessons learned
+
+Three posts a week, from first ping to a multi-vendor architecture (Cisco, MikroTik, Fortinet).
 
 ---
 
-## ▶️ How to use a lab
+## 🛠️ Tech stack
 
-1. Open the lab's `README.md` and follow the guide step by step.
-2. Open the `.pkt` file with [Cisco Packet Tracer](https://www.netacad.com/) to see the finished topology, or rebuild it yourself from the guide (recommended).
-3. Compare your configuration with the files in `configs/`.
+**Working with now**
 
----
+![Cisco](https://img.shields.io/badge/Cisco-049FD9?style=flat-square&logo=cisco&logoColor=white)
+![Packet Tracer](https://img.shields.io/badge/Packet%20Tracer-1BA0D7?style=flat-square)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
 
-## 🧭 Roadmap
+**Coming next**
 
-| Year | Focus |
-|:---:|---|
-| **1** | Fundamentals: LAN, addressing, DHCP, ACL, VLAN, routing basics · Linux basics |
-| **2** | Intermediate: dynamic routing, STP, VPN, GNS3 · MikroTik intro · Linux servers |
-| **3** | Advanced: BGP, HA, IPsec · MikroTik · Fortinet intro · Docker, Ansible, monitoring |
-| **4** | Expert: SD-WAN, VXLAN, automation · Fortinet advanced · Terraform, Kubernetes |
-| **5** | Mastery: multi-vendor capstone, certifications |
-
-**Beyond networking** (next chapters, same format): Fiber optics · DevOps · DevSecOps · Cybersecurity · Web development · Mobile development.
+![GNS3](https://img.shields.io/badge/GNS3-2E7D32?style=flat-square)
+![MikroTik](https://img.shields.io/badge/MikroTik-293239?style=flat-square)
+![Fortinet](https://img.shields.io/badge/Fortinet-EE3124?style=flat-square)
+![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 
 ---
 
-## 🤝 Feedback
+## 📖 What I'm studying
 
-Found a mistake, or have a better way to do something? Open an **issue** or a **pull request**. Corrections are welcome: this series is a learning journey, and I learn from every remark.
+🟢 Studying now · ⬜ Up next
+
+| Area | Topics | Status |
+|---|---|:---:|
+| **Networking fundamentals** | LAN design, IPv4 addressing and subnetting, DHCP, ACLs, VLANs, static routing, NAT | 🟢 |
+| **Linux administration** | Installation, users and permissions, package management, SSH, services, Bash scripting | 🟢 |
+| **Routing and switching** | Dynamic routing (OSPF), STP, EtherChannel, VPN, BGP, high availability | ⬜ |
+| **MikroTik (RouterOS)** | Firewall, routing, queues, VPN, scripting | ⬜ |
+| **Fortinet (FortiGate)** | Security policies, UTM, VPN, SD-WAN, high availability | ⬜ |
+| **Automation and infrastructure** | Python, Ansible, Docker, Terraform, monitoring | ⬜ |
+
+### 🚀 Beyond networking
+
+Networking and Linux are the foundation. Once they are solid, I expand into the rest of the engineering stack, with the same format (lab, article, repository).
+
+| Chapter | What I will learn |
+|---|---|
+| **Fiber optics** | Optical transmission, fiber types, splicing and connectors, measurement and testing, FTTH/FTTx networks |
+| **DevOps** | CI/CD pipelines, containers, infrastructure as code, automation |
+| **DevSecOps** | Security built into the pipeline: scanning, secrets management, hardening |
+| **Cybersecurity** | Defensive and offensive fundamentals, network and system security |
+| **Web development** | Front-end and back-end, APIs, databases |
+| **Mobile development** | Building and shipping mobile applications |
 
 ---
 
-## 📬 Contact
+## 🔬 Latest labs
 
-[LinkedIn](https://www.linkedin.com/in/charles-eric-heuna-8b4b74182/) · [GitHub profile](https://github.com/erikheuna)
+| # | Lab | Topics | Folder |
+|:---:|---|---|:---:|
+| 03 | Access Control Lists | Standard and extended ACLs | [📂](https://github.com/YOUR-USERNAME/reseaux-linux-zero-to-expert/tree/main/03-acl) |
+| 02 | DHCP | Address pools, exclusions | [📂](https://github.com/YOUR-USERNAME/reseaux-linux-zero-to-expert/tree/main/02-dhcp) |
+| 01 | First LAN | Two subnets, router, inter-network routing | [📂](https://github.com/YOUR-USERNAME/reseaux-linux-zero-to-expert/tree/main/01-reseau-lan-simple) |
+
+---
+
+## 📫 Let's connect
+
+I am always happy to exchange with other learners and engineers: feedback, corrections and lab ideas are welcome. Open an issue on the series repository or reach me on [LinkedIn](https://www.linkedin.com/in/YOUR-LINKEDIN/).
+
+<div align="center">
+
+*This profile is updated after every lab.*
+
+</div>
