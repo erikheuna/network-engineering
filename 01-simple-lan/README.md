@@ -8,11 +8,11 @@
 | `configs/` | Device configurations (text) |
 | `images/` | Screenshots |
 
-📝 LinkedIn article: https://lnkd.in/p/dEMCtMbx
+📝 LinkedIn article: [FR](#) · [EN](#)
 
 **Level:** Absolute beginner
 **Objective:** Build a small local network with 2 switches and 1 router, assign IPv4 addresses, and verify end-to-end connectivity.
-**Estimated time:** 15-20 minutes
+**Estimated time:** 45–60 minutes
 
 ---
 
@@ -118,6 +118,7 @@ If the last ping fails while the first two succeed, check that both router inter
 
 ## Screenshots
 
-![Topology](./images/topology.jpg)
-![Verification](./images/ping.jpg)
-
+<!-- Add your screenshots to the images/ folder, then uncomment the lines below:
+![Topology](images/topology.png)
+![Verification](images/verification.png)
+-->

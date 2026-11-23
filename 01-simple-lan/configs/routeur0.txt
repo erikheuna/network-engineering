@@ -1,0 +1,13 @@
+! Lab 1 - Router0 (reference configuration)
+! Replace this file with the output of "show running-config" from your own lab.
+!
+interface GigabitEthernet0/0
+ description LAN1 - to Switch0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description LAN2 - to Switch1
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+!

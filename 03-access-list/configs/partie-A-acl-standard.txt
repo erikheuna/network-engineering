@@ -1,0 +1,9 @@
+! Lab 3 - Part A: standard ACL (block PC3 from reaching network 1)
+! Add to the Lab 2 configuration (interfaces + DHCP).
+!
+access-list 10 deny host 192.168.2.11
+access-list 10 permit any
+!
+interface GigabitEthernet0/0
+ ip access-group 10 out
+!

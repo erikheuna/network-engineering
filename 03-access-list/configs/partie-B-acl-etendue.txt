@@ -1,0 +1,14 @@
+! Lab 3 - Part B: named extended ACL (network 2 may only reach the server over HTTP)
+! Apply after removing the standard ACL from Part A:
+!   interface GigabitEthernet0/0
+!    no ip access-group 10 out
+!   no access-list 10
+!
+ip access-list extended FILTRE_INVITES
+ permit udp any eq 68 any eq 67
+ permit tcp 192.168.2.0 0.0.0.255 host 192.168.1.5 eq 80
+ deny ip any any
+!
+interface GigabitEthernet0/1
+ ip access-group FILTRE_INVITES in
+!

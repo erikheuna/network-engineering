@@ -1,0 +1,27 @@
+! Lab 2 - Router0 (reference configuration)
+! Replace this file with the output of "show running-config" from your own lab.
+!
+interface GigabitEthernet0/0
+ description LAN1 - to Switch0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description LAN2 - to Switch1
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+!
+! Addresses reserved for fixed-IP devices (gateway, servers...)
+ip dhcp excluded-address 192.168.1.1 192.168.1.9
+ip dhcp excluded-address 192.168.2.1 192.168.2.9
+!
+ip dhcp pool POOL_RESEAU1
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool POOL_RESEAU2
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.2.1
+ dns-server 8.8.8.8
+!
